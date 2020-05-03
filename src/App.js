@@ -57,12 +57,8 @@ function App() {
 
   const playPause = () => {
     if (plause === "Play") {
-      if (!canPlay) {
-        lwmAudio.current.load();
-        lwmAudio.current.play();
-      } else {
-        lwmAudio.current.play();
-      }
+      lwmAudio.current.load();
+      lwmAudio.current.play();
     }
     if (plause === "Stop") {
       lwmAudio.current.pause();
