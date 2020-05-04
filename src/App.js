@@ -51,6 +51,9 @@ function App() {
       lwmAudio.current.addEventListener('canplay', () => {
         setCanPlay(true)
       });
+      stream.current.addEventListener('error', () => {
+        setCanPlay(false)
+      });
       lwmAudio.current.volume = vol;
     }
   );
@@ -113,7 +116,9 @@ function App() {
           </div>
         </div>
         <audio preload="metadata" ref={lwmAudio} style={{ width: "100%", height: "100%" }}>
-          <source ref={stream} src="http://178.32.107.151:2331/;stream/1" type="audio/mpeg" />
+          {/* <source ref={stream} src="http://178.32.107.151:2331/;stream/1" type="audio/mpeg" /> */}
+          <source ref={stream} src="http://http://78.129.229.122:14076/;stream/1" type="audio/mpeg" />
+
         </audio>
         <Announcement />
       </div>
