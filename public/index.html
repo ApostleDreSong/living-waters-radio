@@ -112,10 +112,6 @@ position: relative;
     <div id="signupbox" style="display:none; margin-top:50px"
       class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
       <div class="panel panel-info">
-        <div class="panel-heading">
-          <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#"
-              onclick="$('#signupbox').hide(); $('#loginbox').show()">Sign In</a></div>
-        </div>
         <div class="panel-body">
           <form id="signupform" class="form-horizontal" role="form">
 
@@ -123,10 +119,10 @@ position: relative;
               <span id="signUpError"></span>
             </div>
             <div class="form-group">
-              <label for="email" class="col-md-3 control-label">User Name</label>
+              <label for="email" class="col-md-3 control-label">Username</label>
               <div class="col-md-9">
                 <input id="displayName" type="text" class="form-control" name="text"
-                  placeholder="Choose your preferred user name">
+                  placeholder="Choose your preferred user name" required>
               </div>
             </div>
 
@@ -153,6 +149,11 @@ position: relative;
               </div>
             </div>
           </form>
+          <hr />
+          <div class="panel-heading">
+            <div style="font-size: 85%; padding-left: 15px; margin-bottom: 20px;"><a id="signinlink" href="#"
+                onclick="$('#signupbox').hide(); $('#loginbox').show()">Sign In</a></div>
+          </div>
         </div>
       </div>
     </div>
@@ -188,27 +189,32 @@ position: relative;
     const signUp = () => {
       let email = $("#signUpEmail").val();
       let password = $("#signUpPassword").val();
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          let userName = $("#displayName").val();
-          var userDetails = firebase.auth().currentUser;
+      let userName = $("#displayName").val();
+      if (userName.trim() !== "") {
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+          .then(() => {
+            var userDetails = firebase.auth().currentUser;
 
-          userDetails.updateProfile({
-            displayName: userName,
-          }).then(function () {
-            // Update successful.
-          }).catch(function (error) {
-            // An error happened.
+            userDetails.updateProfile({
+              displayName: userName,
+            }).then(function () {
+              // Update successful.
+            }).catch(function (error) {
+              // An error happened.
+            });
+          })
+          .catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            $("#signUpError").html(errorMessage);
+            $("#signupalert").show();
+            // ...
           });
-        })
-        .catch(function (error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          $("#signUpError").html(errorMessage);
-          $("#signupalert").show();
-          // ...
-        });
+      } else {
+        $("#signUpError").html("Please choose a username of your choice");
+        $("#signupalert").show();
+      }
     }
 
     const signIn = () => {
