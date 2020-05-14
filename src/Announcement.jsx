@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Announcement() {
     return (
-        <div id="announcement">
+        <div id="announcement"  style={{marginTop: "20px"}} >
             <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
                 <ol className="carousel-indicators">
                     <li data-target="#carouselExampleIndicators" data-slide-to="0" className="active"></li>

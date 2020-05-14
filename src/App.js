@@ -125,7 +125,7 @@ function App() {
         <audio preload="metadata" ref={lwmAudio} style={{ width: "100%", height: "100%" }}>
           <source ref={stream} src={`http://95.154.196.33:5756/stream?type=.mp3&nocache=${randomCacheNo}`} type="audio/mpeg" />
         </audio>
-        <Announcement />
+        <Announcement/>
 
       </div>
     </div>
