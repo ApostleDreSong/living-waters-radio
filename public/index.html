@@ -81,20 +81,11 @@
               <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
             </div>
 
-            <div class="input-group">
-              <div class="checkbox">
-                <label>
-                  <input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
-                </label>
-              </div>
-            </div>
-
             <div style="margin-top:10px" class="form-group">
               <!-- Button -->
 
               <div class="col-sm-12 controls">
                 <a onClick="signIn()" id="btn-login" href="#" class="btn btn-success">Login </a>
-                <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
 
               </div>
             </div>
@@ -118,7 +109,6 @@
       class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
       <div class="panel panel-info">
         <div class="panel-heading">
-          <div class="panel-title">Sign Up</div>
           <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#"
               onclick="$('#signupbox').hide(); $('#loginbox').show()">Sign In</a></div>
         </div>
@@ -150,17 +140,7 @@
                 <button onClick="signUp()" id="btn-signup" type="button" class="btn btn-info"><i
                     class="icon-hand-right"></i> &nbsp Sign
                   Up</button>
-                <span style="margin-left:8px;">or</span>
               </div>
-            </div>
-
-            <div style="border-top: 1px solid #999; padding-top:20px" class="form-group">
-
-              <div class="col-md-offset-3 col-md-9">
-                <button id="btn-fbsignup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   Sign Up
-                  with Facebook</button>
-              </div>
-
             </div>
           </form>
         </div>
@@ -231,7 +211,6 @@
     firebase.auth().onAuthStateChanged(function (user) {
       if (user && !user.isAnonymous) {
         // User is signed in.
-        console.log(user)
         $('#lwm-chat-wrapper').show();
         $('#register-login').hide();
         $('#signOutBtn').show();
