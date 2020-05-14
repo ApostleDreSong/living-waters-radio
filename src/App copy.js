@@ -5,6 +5,10 @@ import Announcement from './Announcement.jsx';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
+const firebase = window.firebase;
+const FirechatUI = window.FirechatUI;
+const Firechat = window.Firechat;
+
 
 function App() {
   var lwmAudio = useRef();
@@ -12,11 +16,60 @@ function App() {
   const [vol, setVol] = useState(50);
   const [canPlay, setCanPlay] = useState(false);
   const [plause, setPlause] = useState("Play");
+  const [displayName, setDisplayName] = useState("Guest");
+  const [roomName, setRoomName] = useState("Prayer Requests");
   const volInterval = 10;
   const randomCacheNo = Math.floor(Math.random() * 1001);
 
-  
+  useEffect(() => {
+    var config = {
+      apiKey: "AIzaSyD0Y5TflsYjOn8AlFM56Wf0C6nDvBso8m0",
+      authDomain: "living-waters-radio.firebaseapp.com",
+      databaseURL: "https://living-waters-radio.firebaseio.com",
+      projectId: "living-waters-radio",
+      storageBucket: "living-waters-radio.appspot.com",
+      messagingSenderId: "867795591270",
+      appId: "1:867795591270:web:db471d1b905b28baac8da7",
+      measurementId: "G-XR9PVMTG8L"
+    };
+    if (!firebase.apps.length) {
+      try {
+        firebase.initializeApp(config);
+      } catch (err) {
+        console.error("Firebase initialization error raised", err.stack)
+      }
+    }
+    //firebase.analytics();
+    const firebaseRef = firebase.database().ref("lwm-chat");
+    const chat = new FirechatUI(firebaseRef, document.getElementById("firechat-wrapper"));
+    firebase.auth().signInAnonymously().catch(function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
 
+    firebase.auth().onAuthStateChanged(function (anonUser) {
+      if (anonUser) {
+        // User is signed in.
+        console.log("yeeee!")
+        var isAnonymous = anonUser.isAnonymous;
+        var uid = anonUser.uid;
+        chat.setUser(uid, displayName);
+        Firechat.createRoom("Live", "public", roomId => {
+          console.log(roomId)
+        })
+        // ...
+      } else {
+        // User is signed out.
+        // ...
+      }
+      // ...
+    });
+    // chat.createRoom("Live", "public", roomId => {
+    //   console.log(roomId)
+    // })
+  })
   const increaseVolFn = () => {
     if (vol < 100) {
       let sum = vol + volInterval;
@@ -74,6 +127,15 @@ function App() {
     }
   }
 
+  const createRoom = () => {
+    // chat.createRoom(roomName, "public", roomId => {
+    //   console.log(roomId)
+    // })
+  }
+
+  const setRoom = e => {
+    setRoomName(e.target.value)
+  }
 
   return (
     <div id="audio-container">
@@ -126,7 +188,11 @@ function App() {
           <source ref={stream} src={`http://95.154.196.33:5756/stream?type=.mp3&nocache=${randomCacheNo}`} type="audio/mpeg" />
         </audio>
         <Announcement />
-
+        <TextField onChange={setRoom} value={roomName} />
+        <Button onClick={createRoom}>Create Room</Button>
+        <div id="firechat-wrapper">
+          <div>{displayName}</div>
+        </div>
       </div>
     </div>
   );

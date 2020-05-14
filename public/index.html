@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Setting men on fire!"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-        <title>Living Waters Ministry</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-    <!--
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Setting men on fire!" />
+  <meta http-equiv="Pragma" content="no-cache">
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <title>Living Waters Ministry</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+
+  <!-- Firechat -->
+  <link rel="stylesheet" href="https://cdn.firebase.com/libs/firechat/3.0.1/firechat.min.css" />
+  <script src="https://cdn.firebase.com/libs/firechat/3.0.1/firechat.min.js"></script>
+  <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -29,19 +35,219 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+</head>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <button style="
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 50px;
+  margin-right: 50px;
+  display: none
+  " id="signOutBtn" onClick="signOut()" class="btn pmd-btn-fab pmd-ripple-effect btn-success" type="button">Sign
+    Out</button>
+  <div id="register-login" class="container" style="
+    display: flex;
+    justify-content: center;
+  ">
+    <div id="loginbox" style="margin-top:50px; width: 800px"
+      class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <div class="panel-title">Sign In to chat in our prayer rooms</div>
+          <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#">Forgot password?</a></div>
+        </div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+        <div style="padding-top:30px" class="panel-body">
+
+          <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+
+          <form id="loginform" class="form-horizontal" role="form">
+
+            <div style="margin-bottom: 25px" class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+              <input id="login-username" type="email" class="form-control" name="username" value=""
+                placeholder="username or email">
+            </div>
+
+            <div style="margin-bottom: 25px" class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
+            </div>
+
+            <div class="input-group">
+              <div class="checkbox">
+                <label>
+                  <input id="login-remember" type="checkbox" name="remember" value="1"> Remember me
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-top:10px" class="form-group">
+              <!-- Button -->
+
+              <div class="col-sm-12 controls">
+                <a onClick="signIn()" id="btn-login" href="#" class="btn btn-success">Login </a>
+                <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
+
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-12 control">
+                <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%">
+                  Don't have an account!
+                  <a href="#" onClick="$('#loginbox').hide(); $('#signupbox').show()">
+                    Sign Up Here
+                  </a>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    <div id="signupbox" style="display:none; margin-top:50px"
+      class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <div class="panel-title">Sign Up</div>
+          <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#"
+              onclick="$('#signupbox').hide(); $('#loginbox').show()">Sign In</a></div>
+        </div>
+        <div class="panel-body">
+          <form id="signupform" class="form-horizontal" role="form">
+
+            <div id="signupalert" style="display:none" class="alert alert-danger">
+              <p>Error:</p>
+              <span></span>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="col-md-3 control-label">Email</label>
+              <div class="col-md-9">
+                <input id="signUpEmail" type="text" class="form-control" name="email" placeholder="Email Address">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="col-md-3 control-label">Password</label>
+              <div class="col-md-9">
+                <input id="signUpPassword" type="password" class="form-control" name="passwd" placeholder="Password">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <!-- Button -->
+              <div class="col-md-offset-3 col-md-9">
+                <button onClick="signUp()" id="btn-signup" type="button" class="btn btn-info"><i
+                    class="icon-hand-right"></i> &nbsp Sign
+                  Up</button>
+                <span style="margin-left:8px;">or</span>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid #999; padding-top:20px" class="form-group">
+
+              <div class="col-md-offset-3 col-md-9">
+                <button id="btn-fbsignup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   Sign Up
+                  with Facebook</button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="lwm-chat-wrapper" style="display:none">
+    <div id="firechat-wrapper">
+    </div>
+  </div>
+  <script>
+    var config = {
+      apiKey: "AIzaSyD0Y5TflsYjOn8AlFM56Wf0C6nDvBso8m0",
+      authDomain: "living-waters-radio.firebaseapp.com",
+      databaseURL: "https://living-waters-radio.firebaseio.com",
+      projectId: "living-waters-radio",
+      storageBucket: "living-waters-radio.appspot.com",
+      messagingSenderId: "867795591270",
+      appId: "1:867795591270:web:db471d1b905b28baac8da7",
+      measurementId: "G-XR9PVMTG8L"
+    };
+
+    if (!firebase.apps.length) {
+      try {
+        firebase.initializeApp(config);
+      } catch (err) {
+        console.error("Firebase initialization error raised", err)
+      }
+    }
+
+    const firebaseRef = firebase.database().ref("lwm-chat");
+    const chatUI = new FirechatUI(firebaseRef, document.getElementById("firechat-wrapper"));
+    const chat = new Firechat(firebaseRef);
+
+    const signUp = () => {
+      let email = $("#signUpEmail").val();
+      let password = $("#signUpPassword").val();
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ...
+      });
+    }
+
+    const signIn = () => {
+      let email = $("#login-username").val();
+      let password = $("#login-password").val();
+      firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ...
+      });
+    }
+
+    const signOut = () => {
+      firebase.auth().signOut().then(function () {
+        // Sign-out successful.
+        $('#lwm-chat-wrapper').hide();
+        $('#register-login').show();
+        $('#signOutBtn').hide();
+      }).catch(function (error) {
+        // An error happened.
+      });
+    }
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user && !user.isAnonymous) {
+        // User is signed in.
+        console.log(user)
+        $('#lwm-chat-wrapper').show();
+        $('#register-login').hide();
+        $('#signOutBtn').show();
+        var uid = user.uid;
+        chatUI.setUser(uid, "Guest");
+        chat.enterRoom("-M7Fen_9exNz2QYkoFgW");
+        chat.enterRoom("-M7FewKJjEzDnOLJAhAa");
+        chat.enterRoom("-M7Ff6NzmMvHjherK_S8");
+        // ...
+      } else {
+        // User is signed out.
+        // ...
+      }
+      // ...
+    });
+  </script>
+</body>
+
 </html>
