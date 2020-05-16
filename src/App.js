@@ -5,6 +5,7 @@ import Announcement from './Announcement.jsx';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import axios from 'axios';
 
 function App() {
   var lwmAudio = useRef();
@@ -12,10 +13,35 @@ function App() {
   const [vol, setVol] = useState(50);
   const [canPlay, setCanPlay] = useState(false);
   const [plause, setPlause] = useState("Play");
+  const [streamDetails, setStreamDetails] = useState({});
+  const [streamIp, setStreamIp] = useState("");
+  const [streamPort, setStreamPort] = useState("");
   const volInterval = 10;
   const randomCacheNo = Math.floor(Math.random() * 1001);
 
-  
+  useEffect(()=>{
+    setStreamIp(streamDetails.ipAddress);
+    setStreamPort(streamDetails.port);
+  },[streamDetails]);
+
+  useEffect(() => {
+    let mounted = true;
+    axios({
+      method: 'get',
+      url: `ipPort.json`,
+    })
+      .then(function (response) {
+        if (mounted) {
+          setStreamDetails(response.data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [])
 
   const increaseVolFn = () => {
     if (vol < 100) {
@@ -123,9 +149,9 @@ function App() {
           </div>
         </div>
         <audio preload="metadata" ref={lwmAudio} style={{ width: "100%", height: "100%" }}>
-          <source ref={stream} src={`http://95.154.196.33:5756/stream?type=.mp3&nocache=${randomCacheNo}`} type="audio/mpeg" />
+          <source ref={stream} src={`${streamIp}:${streamPort}/stream?type=.mp3&nocache=${randomCacheNo}`} type="audio/mpeg" />
         </audio>
-        <Announcement/>
+        <Announcement />
 
       </div>
     </div>
