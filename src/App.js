@@ -16,13 +16,14 @@ function App() {
   const [streamDetails, setStreamDetails] = useState({});
   const [streamIp, setStreamIp] = useState("");
   const [streamPort, setStreamPort] = useState("");
+  const [userClickedPause, setUserClickedPause] = useState(false);
   const volInterval = 10;
   const randomCacheNo = Math.floor(Math.random() * 1001);
 
-  useEffect(()=>{
+  useEffect(() => {
     setStreamIp(streamDetails.ipAddress);
     setStreamPort(streamDetails.port);
-  },[streamDetails]);
+  }, [streamDetails]);
 
   useEffect(() => {
     let mounted = true;
@@ -74,14 +75,19 @@ function App() {
         setPlause("Stop");
       });
       lwmAudio.current.addEventListener("pause", () => {
-        setPlause("Play");
+        if (!userClickedPause) {
+          lwmAudio.current.load();
+          lwmAudio.current.play();
+        } else {
+          setPlause("Play");
+        }
       });
       lwmAudio.current.addEventListener('canplay', () => {
         setCanPlay(true)
       });
       stream.current.addEventListener('error', () => {
         setPlause("Play");
-        setCanPlay(false)
+        setCanPlay(false);
       });
     }, []
   );
@@ -96,6 +102,7 @@ function App() {
       lwmAudio.current.play();
     }
     if (plause === "Stop") {
+      setUserClickedPause(true);
       lwmAudio.current.pause();
     }
   }
