@@ -16,7 +16,7 @@ function App() {
   const [streamDetails, setStreamDetails] = useState({});
   const [streamIp, setStreamIp] = useState("");
   const [streamPort, setStreamPort] = useState("");
-  const [userClickedPause, setUserClickedPause] = useState(false);
+  const [userNotClickStop, setUserNotClickStop] = useState(true);
   const volInterval = 10;
   const randomCacheNo = Math.floor(Math.random() * 1001);
 
@@ -24,6 +24,7 @@ function App() {
     setStreamIp(streamDetails.ipAddress);
     setStreamPort(streamDetails.port);
   }, [streamDetails]);
+
 
   useEffect(() => {
     let mounted = true;
@@ -73,17 +74,16 @@ function App() {
       });
       lwmAudio.current.addEventListener("playing", () => {
         setPlause("Stop");
+        setCanPlay(true);
       });
       lwmAudio.current.addEventListener("pause", () => {
-        if (!userClickedPause) {
+        setPlause("Play");
+      });
+      lwmAudio.current.addEventListener("ended", () => {
+        if (userNotClickStop) {
           lwmAudio.current.load();
           lwmAudio.current.play();
-        } else {
-          setPlause("Play");
         }
-      });
-      lwmAudio.current.addEventListener('canplay', () => {
-        setCanPlay(true)
       });
       stream.current.addEventListener('error', () => {
         setPlause("Play");
@@ -93,6 +93,13 @@ function App() {
   );
 
   useEffect(() => {
+    axios.get(`https://cors-anywhere.herokuapp.com/${streamIp}:${streamPort}/stream?type=.mp3&nocache=${randomCacheNo}`)
+      .then(() => {
+        setCanPlay(true)
+      })
+  }, [streamPort, streamIp])
+
+  useEffect(() => {
     lwmAudio.current.volume = vol / 100;
   }, [vol])
 
@@ -100,9 +107,10 @@ function App() {
     if (plause === "Play") {
       lwmAudio.current.load();
       lwmAudio.current.play();
+      setUserNotClickStop(true);
     }
     if (plause === "Stop") {
-      setUserClickedPause(true);
+      setUserNotClickStop(false);
       lwmAudio.current.pause();
     }
   }
@@ -155,8 +163,10 @@ function App() {
             </div>
           </div>
         </div>
-        <audio preload="metadata" ref={lwmAudio} style={{ width: "100%", height: "100%" }}>
+        <audio ref={lwmAudio} style={{ width: "100%", height: "100%" }}>
           <source ref={stream} src={`${streamIp}:${streamPort}/stream?type=.mp3&nocache=${randomCacheNo}`} type="audio/mpeg" />
+          {/* <source ref={stream} src={`http://109.169.15.20:28054/stream?type=.mp3&nocache=${randomCacheNo}`} type="audio/mpeg" /> */}
+
         </audio>
         <Announcement />
 
